@@ -1,8 +1,9 @@
 from app import app
+from flask import render_template
 
 @app.route('/' , methods=['GET'])
 def root():
-    return 'TODO'
+    return render_template('main.html')
 
 @app.route('/signup', methods=['POST'])
 def sign_up():
