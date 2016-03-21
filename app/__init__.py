@@ -11,4 +11,6 @@ app.logger.setLevel(logging.ERROR)
 
 app.config['SECRET_KEY'] = 'mnIcdwVxqc80HQ0nYOtS'
 
+from app import views
+
 
