@@ -3,7 +3,7 @@ from flask import render_template
 
 @app.route('/' , methods=['GET'])
 def root():
-    return render_template('main.html')
+    return app.send_static_file('main.html')
 
 @app.route('/signup', methods=['POST'])
 def sign_up():
