@@ -1,5 +1,7 @@
 from app import app
 from flask import render_template , jsonify, request
+from forms import SignUpForm    
+from werkzeug.datastructures import MultiDict
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -7,7 +9,16 @@ def root():
 
 @app.route('/signup', methods=['POST'])
 def sign_up():
-    new_user = request.get_json()
+    data = MultiDict(mapping = request.json)
+    inputs = SignUpForm(data , csrf_enabled=False)
+    if not inputs.validate():
+        response = jsonify(errors = inputs.errors)
+        response.status_code = 400
+        return response
+    else:
+        response = jsonify({'test' : 'test'})
+        response.status_code = 201
+        return response
 
 
 @app.route('/login' , methods=['POST'])
