@@ -1,10 +1,20 @@
 'use strict';
 
 var wishListApp = angular.module('wishListApp', ['ngRoute']);
-wishListApp.controller('SignUpController' , ['$scope' , '$http',
-        function($scope , $http){
-            $scope.profile_url = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ1uNq8D2knHJ6qlIybMOrI-Q1c0GXAXpsQH5L6qtwOeyuG6b-bGOLDk1M"
+wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log',
+        function($scope , $http, $log){
             $scope.user = {};
+            $scope.validate = function(){
+                $http.post('/signup' , $scope.user).
+                    success(function(data , status){
+                        $log.log('Status: ' + status);
+                        $log.log('Data: ' + JSON.stringify(data));
+                    }).
+                error(function(data , status){
+                    $log.log('Status: ' + status);
+                    $log.log('Data: ' +JSON.stringify(data));
+                });
+            };
         }]);
 
 wishListApp.config(function($routeProvider){

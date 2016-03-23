@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template
+from flask import render_template , jsonify, request
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -7,7 +7,8 @@ def root():
 
 @app.route('/signup', methods=['POST'])
 def sign_up():
-    return 'TODO'
+    new_user = request.get_json()
+
 
 @app.route('/login' , methods=['POST'])
 def login():
@@ -28,3 +29,9 @@ def view_item(user_id , item_id):
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
 def delete_item(user_id , item_id):
     return 'TODO'
+
+@app.errorhandler(404)
+def no_such_resource(e):
+    response = jsonify(e)
+    response.status_code = 404
+    return response
