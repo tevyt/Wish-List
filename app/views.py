@@ -2,6 +2,8 @@ from app import app
 from flask import render_template , jsonify, request
 from forms import SignUpForm    
 from werkzeug.datastructures import MultiDict
+from app import db
+from app.models import User
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -16,7 +18,15 @@ def sign_up():
         response.status_code = 400
         return response
     else:
-        response = jsonify({'test' : 'test'})
+        data = request.get_json()
+        firstname = data['firstname']
+        lastname = data['lastname']
+        email = data['email']
+        password = data['password']
+        user = User(firstname , lastname , email , password)
+        db.session.add(user)
+        db.session.commit()
+        response = jsonify(user.__repr__())
         response.status_code = 201
         return response
 
@@ -45,4 +55,10 @@ def delete_item(user_id , item_id):
 def no_such_resource(e):
     response = jsonify(e)
     response.status_code = 404
+    return response
+
+@app.errorhandler(500)
+def no_such_resource(e):
+    response = jsonify(e)
+    response.status_code = 500
     return response
