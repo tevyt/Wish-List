@@ -22,19 +22,33 @@ wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$locat
             };
         }]);
 
-wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log',
-        function($scope , $cookies, $http, $log){
+wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log', '$location',
+        function($scope , $cookies, $http, $log, $location){
             $scope.credentials = {};
             $scope.login = function(){
                 $http.post('/login' , $scope.credentials).
                     success(function(data , status){
                         $cookies.put('loggedIn' , true);
                         $cookies.put('authToken' , data.token);
+                        $location.path('/friends');
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                 });
             };
+        }]);
+
+wishListApp.controller('FriendsController' , ['$scope', '$http', '$log',
+        function($scope, $http , $log){
+            $scope.$on('$routeChangeSuccess' , function(event , current){
+                $http.get('/wishlist').
+                    success(function(data , status){
+                        $log.log(JSON.stringify(data));
+                    }).
+                error(function(data , status){
+                    $log.log(JSON.stringify(data));
+                });
+            });
         }]);
 
 
@@ -46,6 +60,10 @@ wishListApp.config(function($routeProvider){
     when('/login' , {
         templateUrl: 'static/js/partials/login.html',
         controller: 'LoginController'
+    }).
+    when('/friends', {
+        templateUrl: 'static/js/partials/friends.html',
+        controller: 'FriendsController'
     }).
     otherwise({
         redirectTo: '/signup'

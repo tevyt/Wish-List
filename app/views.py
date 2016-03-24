@@ -5,6 +5,7 @@ from werkzeug.datastructures import MultiDict
 from app import db
 from app.models import User, AuthToken
 from hashlib import sha224
+import json
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -70,6 +71,12 @@ def view_item(user_id , item_id):
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
 def delete_item(user_id , item_id):
     return 'TODO'
+
+@app.route('/wishlist', methods=['GET'])
+def wish_list_index():
+     users = db.session.query(User).all()
+     user_list = map(lambda x: x.__repr__() , users)
+     return json.dumps(user_list)
 
 @app.errorhandler(404)
 def no_such_resource(e):
