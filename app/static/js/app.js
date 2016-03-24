@@ -29,6 +29,7 @@ wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log
                 $http.post('/login' , $scope.credentials).
                     success(function(data , status){
                         $cookies.put('loggedIn' , true);
+                        $cookies.put('authToken' , data.token);
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));

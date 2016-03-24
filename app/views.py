@@ -3,7 +3,7 @@ from flask import render_template , jsonify, request
 from forms import SignUpForm, LoginForm    
 from werkzeug.datastructures import MultiDict
 from app import db
-from app.models import User
+from app.models import User, AuthToken
 from hashlib import sha224
 
 @app.route('/' , methods=['GET'])
@@ -47,8 +47,12 @@ def login():
 
         if user.password != hashed_password:
             return bad_request_error(error)
-        return jsonify(user.__repr__())
 
+        token = AuthToken(user.id)
+        db.session.add(token)
+        db.session.commit()
+        response = {'token': token.token}
+        return jsonify(response)
 
 
 @app.route('/wishlist/<user_id>' , methods=['PUT'])

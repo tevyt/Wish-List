@@ -1,6 +1,10 @@
 from . import db
 from hashlib import sha224
 from sqlalchemy.orm import relationship
+import random
+
+def generate_token():
+    return ''.join(random.choice('012345678ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16))
 
 class User(db.Model):
     id = db.Column(db.Integer , primary_key = True)
@@ -22,3 +26,14 @@ class User(db.Model):
 class AuthToken(db.Model):
     token = db.Column(db.String(16) , primary_key=True)
     user_id = db.Column(db.Integer , db.ForeignKey('user.id') , primary_key=True)
+
+    def __init__(self , user_id):
+        user = db.session.query(User).filter_by(id=user_id).first()
+        tokens = map(lambda x: x.token ,user.tokens)
+        token = generate_token()
+        while token in tokens:
+            token = generate_token()
+        self.token = token
+        self.user_id = user.id
+
+        
