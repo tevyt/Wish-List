@@ -3,5 +3,10 @@
     <div class="col-xs-12 text text-center">
       <h1>Friends</h1>
     </div>
+    <ul>
+      <li ng-repeat="user in users">
+        <button ng-click="getWish(user.id)" class="btn btn-primary">{{user.firstname}} {{user.lastname}}</button>
+      </li>
+    </ul>
   </div>
 </div>

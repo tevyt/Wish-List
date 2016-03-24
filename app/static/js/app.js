@@ -43,12 +43,15 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log',
             $scope.$on('$routeChangeSuccess' , function(event , current){
                 $http.get('/wishlist').
                     success(function(data , status){
-                        $log.log(JSON.stringify(data));
+                        $scope.users = data;
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                 });
             });
+            $scope.getWish = function(id){
+                $log.log(id);
+            };
         }]);
 
 
