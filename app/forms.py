@@ -8,3 +8,7 @@ class SignUpForm(Form):
     email  = TextField('email' , validators=[Required() , Email()])
     password = TextField('password' , validators=[Required() , EqualTo('confirmation')])
     confirmation = TextField('confirmation' , validators=[Required()])
+
+class LoginForm(Form):
+    email  = TextField('email' , validators=[Required() , Email()])
+    password = TextField('password' , validators=[Required()])

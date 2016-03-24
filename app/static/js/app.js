@@ -22,11 +22,19 @@ wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$locat
             };
         }]);
 
-wishListApp.controller('LoginController' , ['$scope', '$cookies',  function($scope , $cookies){
-    $scope.login = function(){
-        $cookies.put('loggedIn' , true);
-    };
-}]);
+wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log',
+        function($scope , $cookies, $http, $log){
+            $scope.credentials = {};
+            $scope.login = function(){
+                $http.post('/login' , $scope.credentials).
+                    success(function(data , status){
+                        $cookies.put('loggedIn' , true);
+                    }).
+                error(function(data , status){
+                    $log.log(JSON.stringify(data));
+                });
+            };
+        }]);
 
 
 wishListApp.config(function($routeProvider){

@@ -1,9 +1,10 @@
 from app import app
 from flask import render_template , jsonify, request
-from forms import SignUpForm    
+from forms import SignUpForm, LoginForm    
 from werkzeug.datastructures import MultiDict
 from app import db
 from app.models import User
+from hashlib import sha224
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -14,9 +15,7 @@ def sign_up():
     data = MultiDict(mapping = request.json)
     inputs = SignUpForm(data , csrf_enabled=False)
     if not inputs.validate():
-        response = jsonify(errors = inputs.errors)
-        response.status_code = 400
-        return response
+        bad_request_error(inputs.errors)
     else:
         data = request.get_json()
         firstname = data['firstname']
@@ -33,7 +32,24 @@ def sign_up():
 
 @app.route('/login' , methods=['POST'])
 def login():
-    return 'TODO'
+    data = MultiDict(mapping = request.json)
+    inputs = LoginForm(data , csrf_enabled=False)
+    if not inputs.validate():
+        return bad_request_error(inputs.errors)
+    else:
+        data = request.get_json()
+        error = {'error': 'Invalid login credentials'}
+        user = db.session.query(User).filter_by(email=data['email']).first()
+        if not user:
+            return bad_request_error(error)
+        
+        hashed_password = sha224(data['password']).hexdigest()
+
+        if user.password != hashed_password:
+            return bad_request_error(error)
+        return jsonify(user.__repr__())
+
+
 
 @app.route('/wishlist/<user_id>' , methods=['PUT'])
 def add_item(user_id):
@@ -58,7 +74,12 @@ def no_such_resource(e):
     return response
 
 @app.errorhandler(500)
-def no_such_resource(e):
+def internal_server_error(e):
     response = jsonify(e)
     response.status_code = 500
+    return response
+
+def bad_request_error(errors):
+    response = jsonify(errors)
+    response.status_code = 400
     return response
