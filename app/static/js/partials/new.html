@@ -1,5 +1,19 @@
-<div class="container">
-  <div class="row text text-center">
-    <h1>New Item</h1>
-  </div>
+<div class="row text text-center">
+  <h1>New Item</h1>
 </div>
+<form>
+  <form class="form-horizontal" ng-submit="validate()">
+    <div class="row">
+      <div class= "col-xs-12">
+        <label for ="item_url">Item Url</label>
+        <input type="text" name="item_url" class="form-control"/>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="btn btn-default">Add Item <i class="glyphicon glyphicon-plus"></i></button>
+      </div>
+    </div>
+  </form>
