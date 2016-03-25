@@ -53,7 +53,7 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cooki
             });
             $scope.getWish = function(id){
                 $cookies.put('selectedUser' , id)
-                $location.path('/wishlist')
+                    $location.path('/wishlist')
             };
 
             $scope.currentUser = function(id){
@@ -65,7 +65,7 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
         function($scope , $cookies, $http, $location, $log){
             if($cookies.get('selectedUser')){
                 $scope.id = $cookies.get('selectedUser')
-                $cookies.remove('selectedUser');
+                    $cookies.remove('selectedUser');
             }else if($cookies.get('currentUserId')){
                 $scope.id = $cookies.get('currentUserId');
             }else{
@@ -75,9 +75,9 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                 success(function(data , status){
                     $scope.firstname = data.firstname;
                 }).
-                error(function(data , status){
-                    $log.log(JSON.stringify(data))
-                });
+            error(function(data , status){
+                $log.log(JSON.stringify(data))
+            });
             $scope.currentUser = function(){
                 return $scope.id == $cookies.get('currentUserId');
             }
@@ -86,14 +86,23 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             };
         }]);
 
-wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location',
-        function($scope , $cookies , $log, $location){
-            if($cookies.get('loggedIn') === 'true'){
-                $log.log('Logged In');
-            }else{
+wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location', '$http',
+        function($scope , $cookies , $log, $location, $http){
+            if($cookies.get('loggedIn') !== 'true'){
                 $location.path('/login');
             }
+            $scope.scrape = function(url){
+                $http.post('/scrape' , {'url': url} ).
+                    success(function(data , status){
+                        $scope.images = data;
+                        $scope.selectedImage = data[1].url;
+                    }).
+                error(function(data , status){
+                    $log.log(data);
+                });
+            }
         }]);
+
 wishListApp.config(function($routeProvider){
     $routeProvider.when('/signup',{
         templateUrl: 'static/js/partials/sign_up.html',

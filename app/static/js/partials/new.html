@@ -2,18 +2,27 @@
   <h1>New Item</h1>
 </div>
 <form>
-  <form class="form-horizontal" ng-submit="validate()">
-    <div class="row">
-      <div class= "col-xs-12">
-        <label for ="item_url">Item Url</label>
-        <input type="text" name="item_url" class="form-control"/>
-      </div>
+  <div class="row">
+    <div class= "col-xs-12">
+      <label for ="item_url">Item Url</label>
+      <input type="text" name="item_url" class="form-control" ng-blur="scrape(url)" ng-model="url"/>
     </div>
+  </div>
 
+  <div class="row" ng-show="selectedImage">
+    Image
+    <img src="{{selectedImage}}" class="preview img img-responsive"></img>
+  </div>
 
-    <div class="row">
-      <div class="col-xs-12">
-        <button class="btn btn-default">Add Item <i class="glyphicon glyphicon-plus"></i></button>
-      </div>
+  <div class="row" ng-show="selectedImage">
+    <div class="col-xs-2" ng-repeat="image in images">
+      <img src="{{image.url}}"/>
     </div>
-  </form>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button class="btn btn-default">Add Item <i class="glyphicon glyphicon-plus"></i></button>
+    </div>
+  </div>
+</form>

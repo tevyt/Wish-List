@@ -1,11 +1,14 @@
 from app import app
 from flask import render_template , jsonify, request
-from forms import SignUpForm, LoginForm    
+from forms import SignUpForm, LoginForm 
 from werkzeug.datastructures import MultiDict
 from app import db
 from app.models import User, AuthToken
 from hashlib import sha224
 import json
+from requests import get
+from bs4 import BeautifulSoup
+from urlparse import urljoin
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -54,6 +57,7 @@ def login():
         db.session.commit()
         user_json = user.__repr__()
         user_json['token'] = token.token
+        
         return jsonify(user_json)
 
 
@@ -67,7 +71,6 @@ def view_wishlist(user_id):
     items = map(lambda x: x.__repr__() , user.items)
     result = {'items': items , 'firstname': user.firstname , 'lastname': user.lastname}
     return json.dumps(result)
-    
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['GET'])
 def view_item(user_id , item_id):
@@ -83,16 +86,30 @@ def wish_list_index():
      user_list = map(lambda x: x.__repr__() , users)
      return json.dumps(user_list)
 
+@app.route('/scrape', methods=['POST'])
+def scrape():
+    data = request.get_json()
+    r = get(data['url'])
+    data = r.text
+    soup = BeautifulSoup(data)
+
+
+    images = []
+
+    #Images from Amazon
+    spans = []
+    result_set = soup.find_all('span' , {'class': 'a-button-text'})
+    for span in result_set:
+        if span.find('img'):
+            images.append(span.find('img').get('src'))
+    return json.dumps(map(lambda x: {'url' : x} ,images))
+
+
+
 @app.errorhandler(404)
 def no_such_resource(e):
     response = jsonify(e)
     response.status_code = 404
-    return response
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    response = jsonify(e)
-    response.status_code = 500
     return response
 
 def bad_request_error(errors):
