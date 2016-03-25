@@ -81,8 +81,19 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             $scope.currentUser = function(){
                 return $scope.id == $cookies.get('currentUserId');
             }
+            $scope.openAddItemForm = function(){
+                $location.path('/new');
+            };
         }]);
 
+wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location',
+        function($scope , $cookies , $log, $location){
+            if($cookies.get('loggedIn') === 'true'){
+                $log.log('Logged In');
+            }else{
+                $location.path('/login');
+            }
+        }]);
 wishListApp.config(function($routeProvider){
     $routeProvider.when('/signup',{
         templateUrl: 'static/js/partials/sign_up.html',
@@ -99,6 +110,10 @@ wishListApp.config(function($routeProvider){
     when('/wishlist', {
         templateUrl: 'static/js/partials/wishlist.html',
         controller: 'WishListController'
+    }).
+    when('/new' , {
+        templateUrl: 'static/js/partials/new.html',
+        controller: 'NewItemController'
     }).
     otherwise({
         redirectTo: '/login'
