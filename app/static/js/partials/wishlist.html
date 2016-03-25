@@ -1,0 +1,9 @@
+<div class="row text text-center">
+  <h1 ng-if="!currentUser()">{{firstname}}'s Wishlist</h1>
+  <h1 ng-if="currentUser()">Your Wishlist</h1>
+</div>
+<div class="row">
+  <div class="class="col-xs-12">
+    <button ng-show="currentUser()" ng-click="openAddItemForm()" class="btn btn-primary">Add Item</button>
+  </div>
+</div>

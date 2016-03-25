@@ -13,6 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(70))
     password = db.Column(db.String(70))
     tokens = relationship('AuthToken') 
+    items = relationship('Item')
 
     def __init__(self, firstname , lastname , email , password):
         self.firstname = firstname
@@ -25,15 +26,29 @@ class User(db.Model):
 
 class AuthToken(db.Model):
     token = db.Column(db.String(16) , primary_key=True)
-    user_id = db.Column(db.Integer , db.ForeignKey('user.id') , primary_key=True)
+    user_id = db.Column(db.Integer , db.ForeignKey('user.id'))
 
     def __init__(self , user_id):
-        user = db.session.query(User).filter_by(id=user_id).first()
-        tokens = map(lambda x: x.token ,user.tokens)
+        tokens = db.session.query(AuthToken).all()
+        tokens = map(lambda x: x.token , tokens)
         token = generate_token()
         while token in tokens:
             token = generate_token()
         self.token = token
-        self.user_id = user.id
+        self.user_id = user_id
 
-        
+class Item(db.Model):
+    id = db.Column(db.Integer , primary_key=True)
+    name = db.Column(db.String(80))
+    description = db.Column(db.String(2000))
+    thumbnail_url = db.Column(db.String(500))
+    user_id = db.Column(db.Integer , db.ForeignKey('user.id'))
+
+    def __init__(self , name , description , thumbnail_url , user_id):
+        self.name = name
+        self.description = description
+        self.thumbnail_url = thumbnail_url
+        self.user_id = user_id
+
+    def __repr__(self):
+        return {'id' : self.id , 'name':self.name , 'description': self.description, 'thumbnail':self.thumbnail_url , 'user':self.user_id}

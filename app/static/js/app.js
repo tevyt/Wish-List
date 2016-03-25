@@ -30,6 +30,8 @@ wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log
                     success(function(data , status){
                         $cookies.put('loggedIn' , true);
                         $cookies.put('authToken' , data.token);
+                        $cookies.put('currentUserId' , data.id);
+                        $cookies.put('currentUserName' , data.firstname);
                         $location.path('/friends');
                     }).
                 error(function(data , status){
@@ -38,8 +40,8 @@ wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log
             };
         }]);
 
-wishListApp.controller('FriendsController' , ['$scope', '$http', '$log',
-        function($scope, $http , $log){
+wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cookies','$location',
+        function($scope, $http , $log, $cookies, $location){
             $scope.$on('$routeChangeSuccess' , function(event , current){
                 $http.get('/wishlist').
                     success(function(data , status){
@@ -50,10 +52,36 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log',
                 });
             });
             $scope.getWish = function(id){
-                $log.log(id);
+                $cookies.put('selectedUser' , id)
+                $location.path('/wishlist')
             };
+
+            $scope.currentUser = function(id){
+                return $cookies.get('currentUserId') == id
+            }
         }]);
 
+wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' , '$location', '$log',
+        function($scope , $cookies, $http, $location, $log){
+            if($cookies.get('selectedUser')){
+                $scope.id = $cookies.get('selectedUser')
+                $cookies.remove('selectedUser');
+            }else if($cookies.get('currentUserId')){
+                $scope.id = $cookies.get('currentUserId');
+            }else{
+                $location.path('/login');
+            }
+            $http.get('/wishlist/' + $scope.id).
+                success(function(data , status){
+                    $scope.firstname = data.firstname;
+                }).
+                error(function(data , status){
+                    $log.log(JSON.stringify(data))
+                });
+            $scope.currentUser = function(){
+                return $scope.id == $cookies.get('currentUserId');
+            }
+        }]);
 
 wishListApp.config(function($routeProvider){
     $routeProvider.when('/signup',{
@@ -68,7 +96,11 @@ wishListApp.config(function($routeProvider){
         templateUrl: 'static/js/partials/friends.html',
         controller: 'FriendsController'
     }).
+    when('/wishlist', {
+        templateUrl: 'static/js/partials/wishlist.html',
+        controller: 'WishListController'
+    }).
     otherwise({
-        redirectTo: '/signup'
+        redirectTo: '/login'
     })
 });

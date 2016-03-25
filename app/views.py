@@ -52,8 +52,9 @@ def login():
         token = AuthToken(user.id)
         db.session.add(token)
         db.session.commit()
-        response = {'token': token.token}
-        return jsonify(response)
+        user_json = user.__repr__()
+        user_json['token'] = token.token
+        return jsonify(user_json)
 
 
 @app.route('/wishlist/<user_id>' , methods=['PUT'])
@@ -62,7 +63,11 @@ def add_item(user_id):
 
 @app.route('/wishlist/<user_id>' , methods=['GET'])
 def view_wishlist(user_id):
-    return 'TODO'
+    user = db.session.query(User).filter_by(id=user_id).first()
+    items = map(lambda x: x.__repr__() , user.items)
+    result = {'items': items , 'firstname': user.firstname , 'lastname': user.lastname}
+    return json.dumps(result)
+    
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['GET'])
 def view_item(user_id , item_id):
