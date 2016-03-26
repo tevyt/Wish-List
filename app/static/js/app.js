@@ -107,8 +107,8 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
 
             }
             $scope.createItem = function(){
-                var item = {'imageUrl' : $scope.selectedImage,
-                    'title': $scope.title,
+                var item = {'thumbnail_url' : $scope.selectedImage,
+                    'name': $scope.title,
                     'description': $scope.description}; 
                 $http.post('/wishlist/' + $cookies.get('currentUserId') , item , {headers:{'AuthToken': $cookies.get('authToken')}}).
                     success(function(data , status){

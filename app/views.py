@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template , jsonify, request
-from forms import SignUpForm, LoginForm 
+from forms import SignUpForm, LoginForm, ItemForm
 from werkzeug.datastructures import MultiDict
 from app import db
 from app.models import User, AuthToken
@@ -74,6 +74,11 @@ def add_item(user_id):
         response = jsonify({'message' : 'You are not authorized to perform this action'})
         response.status_code = 401
         return response
+
+    data = MultiDict(mapping=request.json)
+    inputs = ItemForm(data , csrf_enabled=False)
+    if not inputs.validate():
+        return bad_request_error(inputs.errors)
     response = jsonify({'message': 'The correct user'})
     response.status_code = 200
     return response
