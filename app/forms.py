@@ -12,3 +12,9 @@ class SignUpForm(Form):
 class LoginForm(Form):
     email  = TextField('email' , validators=[Required() , Email()])
     password = TextField('password' , validators=[Required()])
+
+
+class ItemForm(Form):
+    name = TextField('name' , validators=[Required()])
+    thumbnail_url = TextField('thumbnailUrl' , validators=[Required()])
+    description = TextField('description')

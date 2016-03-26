@@ -61,9 +61,22 @@ def login():
         return jsonify(user_json)
 
 
-@app.route('/wishlist/<user_id>' , methods=['PUT'])
+@app.route('/wishlist/<user_id>' , methods=['POST'])
 def add_item(user_id):
-    return 'TODO'
+    error_message = {'message' : 'You need to be logged in to perform this action'}
+    user = db.session.query(User).filter_by(id=user_id).first()
+    tokens = map(lambda x: x.token , user.tokens)
+    if not 'AuthToken' in request.headers:
+        response = jsonify(error_message)
+        response.status_code = 401
+        return response
+    if not request.headers['AuthToken'] in tokens:
+        response = jsonify({'message' : 'You are not authorized to perform this action'})
+        response.status_code = 401
+        return response
+    response = jsonify({'message': 'The correct user'})
+    response.status_code = 200
+    return response
 
 @app.route('/wishlist/<user_id>' , methods=['GET'])
 def view_wishlist(user_id):

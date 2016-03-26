@@ -106,6 +106,19 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                 };
 
             }
+            $scope.createItem = function(){
+                var item = {'imageUrl' : $scope.selectedImage,
+                    'title': $scope.title,
+                    'description': $scope.description}; 
+                $http.post('/wishlist/' + $cookies.get('currentUserId') , item , {headers:{'AuthToken': $cookies.get('authToken')}}).
+                    success(function(data , status){
+                        $log.log(JSON.stringify(data));
+                    }).
+                error(function(data , status){
+                    $log.log(JSON.stringify(data));
+                });
+            };
+
         }]);
 
 wishListApp.config(function($routeProvider){
