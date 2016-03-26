@@ -3,7 +3,7 @@ from flask import render_template , jsonify, request
 from forms import SignUpForm, LoginForm, ItemForm
 from werkzeug.datastructures import MultiDict
 from app import db
-from app.models import User, AuthToken
+from app.models import User, AuthToken, Item
 from hashlib import sha224
 import json
 from requests import get
@@ -79,8 +79,14 @@ def add_item(user_id):
     inputs = ItemForm(data , csrf_enabled=False)
     if not inputs.validate():
         return bad_request_error(inputs.errors)
-    response = jsonify({'message': 'The correct user'})
-    response.status_code = 200
+    name = data['name']
+    description = data['description']
+    thumbnail_url = data['thumbnail_url']
+    item = Item(name, description, thumbnail_url, user_id)
+    db.session.add(item)
+    db.session.commit()
+    response = jsonify({'name':item.name , 'description':item.description, 'thumbnail_url':item.thumbnail_url})
+    response.status_code = 201
     return response
 
 @app.route('/wishlist/<user_id>' , methods=['GET'])
