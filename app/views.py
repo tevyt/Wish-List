@@ -98,11 +98,15 @@ def scrape():
 
     #Images from Amazon
     spans = []
-    result_set = soup.find_all('span' , {'class': 'a-button-text'})
+    result_set = soup.find_all('img')
     for span in result_set:
-        if span.find('img'):
-            images.append(span.find('img').get('src'))
-    return json.dumps(map(lambda x: {'url' : x} ,images))
+        if not 'gif' in span.get('src') and not 'png' in span.get('src') and not 'sprite' in span.get('src'):
+            images.append(span.get('src'))
+
+    title = soup.find('span' , {'id':'productTitle'}).getText()
+    images = map(lambda x: {'url' : x} ,images)
+    result = {'images': images ,'title' : title}
+    return json.dumps(result)
 
 
 

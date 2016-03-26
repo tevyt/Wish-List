@@ -94,12 +94,17 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
             $scope.scrape = function(url){
                 $http.post('/scrape' , {'url': url} ).
                     success(function(data , status){
-                        $scope.images = data;
-                        $scope.selectedImage = data[1].url;
+                        $scope.images = data.images;
+                        $scope.selectedImage = $scope.images[0].url;
+                        $scope.title = data.title;
                     }).
                 error(function(data , status){
                     $log.log(data);
                 });
+                $scope.selectImage = function(image){
+                    $scope.selectedImage = image;
+                };
+
             }
         }]);
 

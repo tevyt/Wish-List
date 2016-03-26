@@ -2,7 +2,6 @@ from . import db
 from hashlib import sha224
 from sqlalchemy.orm import relationship
 import random
-
 def generate_token():
     return ''.join(random.choice('012345678ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16))
 
