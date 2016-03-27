@@ -63,17 +63,13 @@ def login():
 
 @app.route('/wishlist/<user_id>' , methods=['POST'])
 def add_item(user_id):
-    error_message = {'message' : 'You need to be logged in to perform this action'}
     user = db.session.query(User).filter_by(id=user_id).first()
     tokens = map(lambda x: x.token , user.tokens)
-    if not 'AuthToken' in request.headers:
-        response = jsonify(error_message)
-        response.status_code = 401
-        return response
-    if not request.headers['AuthToken'] in tokens:
-        response = jsonify({'message' : 'You are not authorized to perform this action'})
-        response.status_code = 401
-        return response
+    check = check_auth_header(request.headers)
+    if not check[0]:
+        return check[1]
+    if not authenticate_user(tokens , request.headers['AuthToken']):
+        return unauthorized_message()
 
     data = MultiDict(mapping=request.json)
     inputs = ItemForm(data , csrf_enabled=False)
@@ -102,7 +98,23 @@ def view_item(user_id , item_id):
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
 def delete_item(user_id , item_id):
-    return 'TODO'
+    user = db.session.query(User).filter_by(id=user_id).first()
+    tokens = map(lambda x: x.token , user.tokens)
+    check = check_auth_header(request.headers)
+    if not check[0]:
+        return check[1]
+    if not authenticate_user(tokens , request.headers['AuthToken']):
+        return unauthorized_message()
+    item_ids = map(lambda x: x.id , user.items)
+    if not int(item_id) in item_ids:
+        response = jsonify({'message': 'No such item'})
+        response.status_code = 404
+        return response
+    db.session.query(Item).filter_by(id=item_id).delete()
+    db.session.commit()
+    response = jsonify({})
+    response.status_code = 204
+    return response
 
 @app.route('/wishlist', methods=['GET'])
 def wish_list_index():
@@ -131,6 +143,24 @@ def scrape():
     images = map(lambda x: {'url' : x} ,images)
     result = {'images': images ,'title' : title}
     return json.dumps(result)
+
+def authenticate_user(tokens, token ):
+    return token in tokens
+
+def check_auth_header(headers):
+    error_message = {'message' : 'You need to be logged in to perform this action'}
+    if not 'AuthToken' in headers:
+        response = jsonify(error_message)
+        response.status_code = 401
+        return [False, response]
+    return [True]
+
+def unauthorized_message():
+    response = jsonify({'message' : 'You are not authorized to perform this action'})
+    response.status_code = 401
+    return response
+
+
 
 
 

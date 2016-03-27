@@ -74,6 +74,7 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             $http.get('/wishlist/' + $scope.id).
                 success(function(data , status){
                     $scope.firstname = data.firstname;
+                    $scope.items = data.items;
                 }).
             error(function(data , status){
                 $log.log(JSON.stringify(data))
@@ -84,6 +85,15 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             $scope.openAddItemForm = function(){
                 $location.path('/new');
             };
+            $scope.deleteItem = function(id , index){
+                $http.delete('/wishlist/' + $cookies.get('currentUserId') + '/' + id , {headers:{'AuthToken': $cookies.get('authToken')}}).
+                    success(function(data , status){
+                        $scope.items.splice(index , 1);
+                    }).
+                error(function(data , status){
+                    $log.log(JSON.stringify(data));
+                });
+            }
         }]);
 
 wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location', '$http',
@@ -112,7 +122,7 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                     'description': $scope.description}; 
                 $http.post('/wishlist/' + $cookies.get('currentUserId') , item , {headers:{'AuthToken': $cookies.get('authToken')}}).
                     success(function(data , status){
-                        $log.log(JSON.stringify(data));
+                        $location.path('/wishlist'); 
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));

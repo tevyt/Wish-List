@@ -2,6 +2,14 @@
   <h1 ng-if="!currentUser()">{{firstname}}'s Wishlist</h1>
   <h1 ng-if="currentUser()">Your Wishlist</h1>
 </div>
+<div class="row" ng-repeat="item in items">
+  <div class="col-xs-10 text text-center">
+    <a ng-href="/">{{item.name}}</a>
+  </div>
+  <div class="col-xs-2" ng-show="currentUser()">
+    <a href=""><i class="glyphicon glyphicon-trash" ng-click="deleteItem(item.id , $index)"></i></a>
+  </div>
+</div>
 <div class="row">
   <div class="class="col-xs-12">
     <button ng-show="currentUser()" ng-click="openAddItemForm()" class="btn btn-primary">Add Item <i class="glyphicon glyphicon-plus"></i></button>

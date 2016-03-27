@@ -16,5 +16,5 @@ class LoginForm(Form):
 
 class ItemForm(Form):
     name = TextField('name' , validators=[Required()])
-    thumbnail_url = TextField('thumbnailUrl' , validators=[Required()])
+    thumbnail_url = TextField('thumbnailUrl')
     description = TextField('description')
