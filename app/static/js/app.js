@@ -64,8 +64,7 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cooki
 wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' , '$location', '$log',
         function($scope , $cookies, $http, $location, $log){
             if($cookies.get('selectedUser')){
-                $scope.id = $cookies.get('selectedUser')
-                    $cookies.remove('selectedUser');
+                $scope.id = $cookies.get('selectedUser');
             }else if($cookies.get('currentUserId')){
                 $scope.id = $cookies.get('currentUserId');
             }else{
@@ -93,6 +92,11 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                 });
+            }
+            $scope.viewItem = function(id){
+                $cookies.put('item' , id);
+                $cookies.put('selectedUser', $scope.id);
+                $location.path('/item');
             }
         }]);
 
@@ -130,6 +134,24 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
             };
 
         }]);
+wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$http','$log',
+        function($scope , $cookies, $location, $http, $log){
+            if(!$cookies.get('selectedUser') || !$cookies.get('item')){
+                $location.path('/friends');
+            }
+            var userId = $cookies.get('selectedUser');
+            var itemId = $cookies.get('item');
+            $http.get('/wishlist/' + userId + '/' + itemId).
+                success(function(data ,status){
+                    $scope.title = data.name;
+                    $scope.thumbnailUrl = data.thumbnailUrl;
+                    $scope.description = data.description;
+                }).
+            error(function(data , status){
+                $log.log(JSON.stringify(data));
+            });
+        }]);
+
 
 wishListApp.config(function($routeProvider){
     $routeProvider.when('/signup',{
@@ -151,6 +173,10 @@ wishListApp.config(function($routeProvider){
     when('/new' , {
         templateUrl: 'static/js/partials/new.html',
         controller: 'NewItemController'
+    }).
+    when('/item', {
+        templateUrl: 'static/js/partials/item.html',
+        controller: 'ItemController'
     }).
     otherwise({
         redirectTo: '/login'

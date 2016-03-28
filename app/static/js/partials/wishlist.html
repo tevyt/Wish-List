@@ -4,7 +4,7 @@
 </div>
 <div class="row" ng-repeat="item in items">
   <div class="col-xs-10 text text-center">
-    <a ng-href="/">{{item.name}}</a>
+    <a href="" ng-click="viewItem(item.id)">{{item.name}}</a>
   </div>
   <div class="col-xs-2" ng-show="currentUser()">
     <a href=""><i class="glyphicon glyphicon-trash" ng-click="deleteItem(item.id , $index)"></i></a>

@@ -94,11 +94,28 @@ def view_wishlist(user_id):
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['GET'])
 def view_item(user_id , item_id):
-    return 'TODO'
+    user = db.session.query(User).filter_by(id=user_id).first()
+    if not user:
+        response = jsonify({'message':'User not found'})
+        response.status_code = 404
+        return response
+    item_ids = map(lambda x: x.id , user.items)
+    if not int(item_id) in item_ids:
+        response = jsonify({'message': 'No such item'})
+        response.status_code = 404
+        return response
+    index = item_ids.index(int(item_id))
+    item = user.items[index]
+    return jsonify({'name': item.name, 'description': item.description, 'thumbnailUrl': item.thumbnail_url})
+
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
 def delete_item(user_id , item_id):
     user = db.session.query(User).filter_by(id=user_id).first()
+    if not user:
+        response = jsonify({'message':'User not found'})
+        response.status_code = 404
+        return response
     tokens = map(lambda x: x.token , user.tokens)
     check = check_auth_header(request.headers)
     if not check[0]:
