@@ -30,6 +30,7 @@ run(function($cookies, $rootScope, $location, $http, $log){
             $log.log('Status: ' + status);
             $log.log(JSON.stringify(data));
             $rootScope.error = true;
+            $rootScope.errors = data;
         });
     };
     $rootScope.error = false;
@@ -47,12 +48,16 @@ wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$locat
                     }).
                 error(function(data , status){
                     $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
             };
         }]);
 
 wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log', '$location','$rootScope',
         function($scope , $cookies, $http, $log, $location,$rootScope){
+            if($cookies.get('loggedIn') === 'true'){
+                $location.path('/friends');
+            }
             $rootScope.error = false;
             $scope.credentials = {};
             $scope.login = function(){
@@ -85,6 +90,7 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cooki
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                     $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
             });
             $scope.getWish = function(id){
@@ -115,6 +121,7 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             error(function(data , status){
                 $log.log(JSON.stringify(data));
                 $rootScope.error=true;
+                $rootScope.errors = data;
             });
             $scope.currentUser = function(){
                 return $scope.id == $cookies.get('currentUserId');
@@ -130,6 +137,7 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                     $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
             }
             $scope.viewItem = function(id){
@@ -155,6 +163,7 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                 error(function(data , status){
                     $log.log(data);
                     $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
                 $scope.selectImage = function(image){
                     $scope.selectedImage = image;
@@ -172,6 +181,7 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
                     $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
             };
 
@@ -193,6 +203,7 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
             error(function(data , status){
                 $log.log(JSON.stringify(data));
                 $rootScope.error = true;
+                $rootScope.errors = data;
             });
         }]);
 
