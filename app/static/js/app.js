@@ -14,14 +14,23 @@ run(function($cookies, $rootScope, $location, $http, $log){
         $location.path('/me');
     };
     $rootScope.logout = function(){
-        $cookies.put('loggedIn' , false);
-        $cookies.remove('authToken');
-        $cookies.remove('currentUserId');
-        $cookies.remove('currentUserName');
-        $rootScope.loggedIn = false;
-        delete $rootScope.currentUserName;
-        $location.path('/login');
-    }
+        $http.delete('/logout/' + $cookies.get('currentUserId'), {headers:{'AuthToken': $cookies.get('authToken')}}).
+            success(function(data , status){
+                $log.log('Status: ' + status);
+                $log.log(JSON.stringify(data));
+                $cookies.put('loggedIn' , false);
+                $cookies.remove('authToken');
+                $cookies.remove('currentUserId');
+                $cookies.remove('currentUserName');
+                $rootScope.loggedIn = false;
+                delete $rootScope.currentUserName;
+                $location.path('/login');
+            }).
+        error(function(data , status){
+            $log.log('Status: ' + status);
+            $log.log(JSON.stringify(data));
+        });
+    };
 });
 
 wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$location',

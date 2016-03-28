@@ -161,6 +161,25 @@ def scrape():
     result = {'images': images ,'title' : title}
     return json.dumps(result)
 
+@app.route('/logout/<user_id>', methods=['DELETE'])
+def logout(user_id):
+    user = db.session.query(User).filter_by(id=user_id).first()
+    if not user:
+        response = jsonify({'message':'User not found'})
+        response.status_code = 404
+        return response
+    tokens = map(lambda x: x.token , user.tokens)
+    check = check_auth_header(request.headers)
+    if not check[0]:
+        return check[1]
+    if not authenticate_user(tokens , request.headers['AuthToken']):
+        return unauthorized_message()
+    db.session.query(AuthToken).filter_by(token=request.headers['AuthToken']).delete()
+    db.session.commit()
+    response = jsonify({})
+    response.status_code = 204
+    return response
+
 def authenticate_user(tokens, token ):
     return token in tokens
 
