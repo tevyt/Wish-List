@@ -1,11 +1,11 @@
 'use strict';
 
 var wishListApp = angular.module('wishListApp', ['ngRoute' , 'ngCookies']).
-run(function($cookies, $rootScope, $location){
+run(function($cookies, $rootScope, $location, $http, $log){
     if(!$cookies.get('loggedIn')){
         $cookies.put('loggedIn' , false);
         $rootScope.loggedIn = false;
-    }else{
+    }else if($cookies.get('loggedIn') === 'true'){
         $rootScope.loggedIn = true;
         $rootScope.currentUserName = $cookies.get('currentUserName');
     }
@@ -13,6 +13,15 @@ run(function($cookies, $rootScope, $location){
         $cookies.put('selectedUser' , $cookies.get('currentUserId'));
         $location.path('/me');
     };
+    $rootScope.logout = function(){
+        $cookies.put('loggedIn' , false);
+        $cookies.remove('authToken');
+        $cookies.remove('currentUserId');
+        $cookies.remove('currentUserName');
+        $rootScope.loggedIn = false;
+        delete $rootScope.currentUserName;
+        $location.path('/login');
+    }
 });
 
 wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$location',
