@@ -1,0 +1,25 @@
+{
+  "name": "info3180-project3",
+  "homepage": "https://github.com/tevyt/Wish-List",
+  "authors": [
+    "Travis Smith <travissmith94@hotmail.com>"
+  ],
+  "description": "A wishlist application built using Flask and AngularJS",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.2",
+    "bootstrap": "~3.3.6",
+    "angular": "~1.5.3",
+    "angular-cookies": "~1.5.3",
+    "angular-route": "~1.5.3"
+  }
+}
