@@ -38,7 +38,7 @@ class AuthToken(db.Model):
 
 class Item(db.Model):
     id = db.Column(db.Integer , primary_key=True)
-    name = db.Column(db.String(80))
+    name = db.Column(db.String(1000))
     description = db.Column(db.String(2000))
     thumbnail_url = db.Column(db.String(500))
     user_id = db.Column(db.Integer , db.ForeignKey('user.id'))

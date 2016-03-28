@@ -32,7 +32,7 @@
           <li ng-show="$root.loggedIn"><a href=""><span ng-click="$root.getMyWishlist()">My Wishlist</span></a></li>
           <li><a ng-href="#/friends">Friends</a></li>
           <li ng-show="$root.loggedIn"><a href=""><span ng-click="$root.logout()">Logout</span></a></li>
-          <li ng-hide="$root.loggedIn"><a href="">Sign Up</a></li>
+          <li ng-hide="$root.loggedIn"><a ng-href="#/signup">Sign Up</a></li>
         </ul>
       </div>
     </nav>
