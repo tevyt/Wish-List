@@ -24,6 +24,16 @@
   </head>
 
   <body class="container" ng-app="wishListApp">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav"> 
+          <li ng-hide="$root.loggedIn"><a ng-href="#/login">Login</a></li>
+          <li ng-show="$root.loggedIn"><a href="">Hello, {{$root.currentUserName}}</a></li>
+          <li ng-show="$root.loggedIn"><a href=""><span ng-click="$root.getMyWishlist()">My Wishlist</span></a></li>
+          <li><a ng-href="#/friends">Friends</a></li>
+        </ul>
+      </div>
+    </nav>
     <ng-view></ng-view>
   </body>
 </html>

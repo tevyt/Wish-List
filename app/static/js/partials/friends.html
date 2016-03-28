@@ -5,7 +5,7 @@
   <div class="row" ng-repeat="user in users">
     <div class="col-xs-12">
       <button ng-if="!currentUser(user.id)" ng-click="getWish(user.id)" class="btn btn-primary btn-block">{{user.firstname}} {{user.lastname}}</button>
-      <button ng-if="currentUser(user.id)" ng-click="getWish(user.id)" class="btn btn-danger btn-block">{{user.firstname}} {{user.lastname}}</button>
+      <button ng-if="currentUser(user.id)" ng-click="$root.getMyWishlist()" class="btn btn-danger btn-block">{{user.firstname}} {{user.lastname}}</button>
     </div>
   </div>
 </div>

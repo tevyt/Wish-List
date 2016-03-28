@@ -1,10 +1,18 @@
 'use strict';
 
 var wishListApp = angular.module('wishListApp', ['ngRoute' , 'ngCookies']).
-run(function($cookies){
+run(function($cookies, $rootScope, $location){
     if(!$cookies.get('loggedIn')){
         $cookies.put('loggedIn' , false);
+        $rootScope.loggedIn = false;
+    }else{
+        $rootScope.loggedIn = true;
+        $rootScope.currentUserName = $cookies.get('currentUserName');
     }
+    $rootScope.getMyWishlist= function(){
+        $cookies.put('selectedUser' , $cookies.get('currentUserId'));
+        $location.path('/me');
+    };
 });
 
 wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$location',
@@ -22,8 +30,8 @@ wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$locat
             };
         }]);
 
-wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log', '$location',
-        function($scope , $cookies, $http, $log, $location){
+wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log', '$location','$rootScope',
+        function($scope , $cookies, $http, $log, $location,$rootScope){
             $scope.credentials = {};
             $scope.login = function(){
                 $http.post('/login' , $scope.credentials).
@@ -32,6 +40,8 @@ wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log
                         $cookies.put('authToken' , data.token);
                         $cookies.put('currentUserId' , data.id);
                         $cookies.put('currentUserName' , data.firstname);
+                        $rootScope.loggedIn = true;
+                        $rootScope.currentUserName = data.firstname;
                         $location.path('/friends');
                     }).
                 error(function(data , status){
@@ -178,7 +188,11 @@ wishListApp.config(function($routeProvider){
         templateUrl: 'static/js/partials/item.html',
         controller: 'ItemController'
     }).
+    when('/me' , {
+        templateUrl: 'static/js/partials/wishlist.html',
+        controller: 'WishListController'
+    }).
     otherwise({
         redirectTo: '/login'
-    })
+    });
 });
