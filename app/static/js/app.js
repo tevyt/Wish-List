@@ -29,12 +29,16 @@ run(function($cookies, $rootScope, $location, $http, $log){
         error(function(data , status){
             $log.log('Status: ' + status);
             $log.log(JSON.stringify(data));
+            $rootScope.error = true;
         });
     };
+    $rootScope.error = false;
+    $rootScope.errors = {};
 });
 
-wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$location',
-        function($scope , $http, $log, $location){
+wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$location','$rootScope',
+        function($scope , $http, $log, $location, $rootScope){
+            $rootScope.error = false;
             $scope.user = {};
             $scope.validate = function(){
                 $http.post('/signup' , $scope.user).
@@ -42,14 +46,14 @@ wishListApp.controller('SignUpController' , ['$scope' , '$http', '$log', '$locat
                         $location.path('/login');
                     }).
                 error(function(data , status){
-                    $log.log('Status: ' + status);
-                    $log.log('Data: ' +JSON.stringify(data));
+                    $rootScope.error = true;
                 });
             };
         }]);
 
 wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log', '$location','$rootScope',
         function($scope , $cookies, $http, $log, $location,$rootScope){
+            $rootScope.error = false;
             $scope.credentials = {};
             $scope.login = function(){
                 $http.post('/login' , $scope.credentials).
@@ -64,12 +68,15 @@ wishListApp.controller('LoginController' , ['$scope', '$cookies', '$http', '$log
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
+                    $rootScope.error = true;
+                    $rootScope.errors = data;
                 });
             };
         }]);
 
-wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cookies','$location',
-        function($scope, $http , $log, $cookies, $location){
+wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cookies','$location','$rootScope',
+        function($scope, $http , $log, $cookies, $location, $rootScope){
+            $rootScope.error = false;
             $scope.$on('$routeChangeSuccess' , function(event , current){
                 $http.get('/wishlist').
                     success(function(data , status){
@@ -77,6 +84,7 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cooki
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
+                    $rootScope.error = true;
                 });
             });
             $scope.getWish = function(id){
@@ -89,8 +97,9 @@ wishListApp.controller('FriendsController' , ['$scope', '$http', '$log', '$cooki
             }
         }]);
 
-wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' , '$location', '$log',
-        function($scope , $cookies, $http, $location, $log){
+wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' , '$location', '$log', '$rootScope' ,
+        function($scope , $cookies, $http, $location, $log, $rootScope){
+            $rootScope.error = false;
             if($cookies.get('selectedUser')){
                 $scope.id = $cookies.get('selectedUser');
             }else if($cookies.get('currentUserId')){
@@ -104,7 +113,8 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                     $scope.items = data.items;
                 }).
             error(function(data , status){
-                $log.log(JSON.stringify(data))
+                $log.log(JSON.stringify(data));
+                $rootScope.error=true;
             });
             $scope.currentUser = function(){
                 return $scope.id == $cookies.get('currentUserId');
@@ -119,6 +129,7 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
+                    $rootScope.error = true;
                 });
             }
             $scope.viewItem = function(id){
@@ -128,8 +139,9 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
             }
         }]);
 
-wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location', '$http',
-        function($scope , $cookies , $log, $location, $http){
+wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location', '$http','$rootScope' ,
+        function($scope , $cookies , $log, $location, $http,$rootScope){
+            $rootScope.error = false;
             if($cookies.get('loggedIn') !== 'true'){
                 $location.path('/login');
             }
@@ -142,6 +154,7 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                     }).
                 error(function(data , status){
                     $log.log(data);
+                    $rootScope.error = true;
                 });
                 $scope.selectImage = function(image){
                     $scope.selectedImage = image;
@@ -158,12 +171,14 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
                     }).
                 error(function(data , status){
                     $log.log(JSON.stringify(data));
+                    $rootScope.error = true;
                 });
             };
 
         }]);
-wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$http','$log',
-        function($scope , $cookies, $location, $http, $log){
+wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$http','$log','$rootScope',
+        function($scope , $cookies, $location, $http, $log,$rootScope){
+            $rootScope.error = false;
             if(!$cookies.get('selectedUser') || !$cookies.get('item')){
                 $location.path('/friends');
             }
@@ -177,6 +192,7 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                 }).
             error(function(data , status){
                 $log.log(JSON.stringify(data));
+                $rootScope.error = true;
             });
         }]);
 

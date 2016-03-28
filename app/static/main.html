@@ -36,6 +36,13 @@
         </ul>
       </div>
     </nav>
+    <div ng-show="$root.error" class="alert alert-danger">
+      <div ng-repeat="(key , values) in $root.errors">
+        <div ng-repeat="value in [].concat(values)">
+          {{key}} : {{value}}
+        </div>
+      </div>
+    </div>
     <ng-view></ng-view>
   </body>
 </html>

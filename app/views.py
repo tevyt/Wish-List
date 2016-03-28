@@ -19,7 +19,7 @@ def sign_up():
     data = MultiDict(mapping = request.json)
     inputs = SignUpForm(data , csrf_enabled=False)
     if not inputs.validate():
-        bad_request_error(inputs.errors)
+        return bad_request_error(inputs.errors)
     else:
         data = request.get_json()
         firstname = data['firstname']
