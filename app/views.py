@@ -75,6 +75,8 @@ def add_item(user_id):
     inputs = ItemForm(data , csrf_enabled=False)
     if not inputs.validate():
         return bad_request_error(inputs.errors)
+
+    data = request.get_json()
     name = data['name']
     description = data['description']
     thumbnail_url = data['thumbnail_url']
@@ -142,7 +144,8 @@ def wish_list_index():
 @app.route('/scrape', methods=['POST'])
 def scrape():
     data = request.get_json()
-    r = get(data['url'])
+    url = data['url']
+    r = get(url)
     data = r.text
     soup = BeautifulSoup(data)
 
@@ -156,7 +159,18 @@ def scrape():
         if not 'gif' in span.get('src') and not 'png' in span.get('src') and not 'sprite' in span.get('src'):
             images.append(span.get('src'))
 
-    title = soup.find('span' , {'id':'productTitle'}).getText()
+    if 'amazon' in request.get_json()['url']:
+        title = soup.find('span' , {'id':'productTitle'})
+    elif 'newegg' in request.get_json()['url']:
+        title = soup.find('span' , {'id':'grpDescrip_0'})
+    elif 'ebay' in request.get_json()['url']:
+        title = soup.find('h1' , {'id':'itemTitle'})
+        print len(title)
+
+    if title:
+        title = title.getText()
+    else:
+        title = ''
     images = map(lambda x: {'url' : x} ,images)
     result = {'images': images ,'title' : title}
     return json.dumps(result)
