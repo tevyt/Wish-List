@@ -42,12 +42,14 @@ class Item(db.Model):
     description = db.Column(db.String(2000))
     thumbnail_url = db.Column(db.String(500))
     user_id = db.Column(db.Integer , db.ForeignKey('user.id'))
+    item_url = db.Column(db.String(1000))
 
-    def __init__(self , name , description , thumbnail_url , user_id):
+    def __init__(self , name , description , thumbnail_url , user_id, item_url):
         self.name = name
         self.description = description
         self.thumbnail_url = thumbnail_url
         self.user_id = user_id
+        self.item_url = item_url
 
     def __repr__(self):
         return {'id' : self.id , 'name':self.name , 'description': self.description, 'thumbnail':self.thumbnail_url , 'user':self.user_id}

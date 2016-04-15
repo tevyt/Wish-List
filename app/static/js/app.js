@@ -173,7 +173,9 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
             $scope.createItem = function(){
                 var item = {'thumbnail_url' : $scope.selectedImage,
                     'name': $scope.title,
-                    'description': $scope.description}; 
+                    'description': $scope.description,
+                    'item_url': $scope.url}; 
+
                 $http.post('/wishlist/' + $cookies.get('currentUserId') , item , {headers:{'AuthToken': $cookies.get('authToken')}}).
                     success(function(data , status){
                         $location.path('/wishlist'); 
@@ -199,6 +201,7 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                     $scope.title = data.name;
                     $scope.thumbnailUrl = data.thumbnailUrl;
                     $scope.description = data.description;
+                    $scope.itemUrl = data.itemUrl;
                 }).
             error(function(data , status){
                 $log.log(JSON.stringify(data));

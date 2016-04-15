@@ -80,7 +80,8 @@ def add_item(user_id):
     name = data['name']
     description = data['description']
     thumbnail_url = data['thumbnail_url']
-    item = Item(name, description, thumbnail_url, user_id)
+    item_url = data['item_url']
+    item = Item(name, description, thumbnail_url, user_id, item_url)
     db.session.add(item)
     db.session.commit()
     response = jsonify({'name':item.name , 'description':item.description, 'thumbnail_url':item.thumbnail_url})
@@ -108,7 +109,7 @@ def view_item(user_id , item_id):
         return response
     index = item_ids.index(int(item_id))
     item = user.items[index]
-    return jsonify({'name': item.name, 'description': item.description, 'thumbnailUrl': item.thumbnail_url})
+    return jsonify({'name': item.name, 'description': item.description, 'thumbnailUrl': item.thumbnail_url, 'itemUrl': item.item_url})
 
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
