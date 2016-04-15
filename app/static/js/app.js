@@ -202,6 +202,7 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                     $scope.thumbnailUrl = data.thumbnailUrl;
                     $scope.description = data.description;
                     $scope.itemUrl = data.itemUrl;
+                    $scope.purchased = data.purchased;
                 }).
             error(function(data , status){
                 $log.log(JSON.stringify(data));

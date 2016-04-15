@@ -109,8 +109,7 @@ def view_item(user_id , item_id):
         return response
     index = item_ids.index(int(item_id))
     item = user.items[index]
-    return jsonify({'name': item.name, 'description': item.description, 'thumbnailUrl': item.thumbnail_url, 'itemUrl': item.item_url})
-
+    return jsonify({'name': item.name, 'description': item.description, 'thumbnailUrl': item.thumbnail_url, 'itemUrl': item.item_url, 'purchased': item.purchased})
 
 @app.route('/wishlist/<user_id>/<item_id>' , methods=['DELETE'])
 def delete_item(user_id , item_id):
