@@ -4,10 +4,11 @@
 </div>
 <div class="row" ng-repeat="item in items">
   <div class="col-xs-2">
-      <input ng-disabled="!currentUser()" ng-class="checkbox" type="checkbox" ng-model="item.purchased"/>
+      <input ng-disabled="!currentUser()" ng-class="checkbox" type="checkbox" ng-model="item.purchased" ng-change="purchaseItem(item.id, $index)"/>
   </div>
   <div class="col-xs-8 text text-center">
-    <a href="" ng-click="viewItem(item.id)">{{item.name}}</a>
+    <a ng-if="!item.purchased"href="" ng-click="viewItem(item.id)">{{item.name}}</a>
+    <del><a ng-if="item.purchased"href="" ng-click="viewItem(item.id)" style="color:grey">{{item.name}}</a></del>
   </div>
   <div class="col-xs-2" ng-show="currentUser()">
     <a href=""><i class="glyphicon glyphicon-trash" ng-click="deleteItem(item.id , $index)"></i></a>

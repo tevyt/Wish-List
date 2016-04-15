@@ -135,6 +135,30 @@ def delete_item(user_id , item_id):
     response.status_code = 204
     return response
 
+@app.route('/wishlist/<user_id>/<item_id>' , methods=['PATCH'])
+def purchase_item(user_id, item_id):
+    data = request.get_json()
+    user = db.session.query(User).filter_by(id=user_id).first()
+    if not user:
+        response = jsonify({'message':'User not found'})
+        response.status_code = 404
+        return response
+    tokens = map(lambda x: x.token , user.tokens)
+    check = check_auth_header(request.headers)
+    if not check[0]:
+        return check[1]
+    if not authenticate_user(tokens , request.headers['AuthToken']):
+        return unauthorized_message()
+    item_ids = map(lambda x: x.id , user.items)
+    if not int(item_id) in item_ids:
+        response = jsonify({'message': 'No such item'})
+        response.status_code = 404
+        return response
+    item = db.session.query(Item).filter_by(id=item_id).first()
+    item.purchased = data['purchased']
+    db.session.commit()
+    return jsonify(item.__repr__())
+
 @app.route('/wishlist', methods=['GET'])
 def wish_list_index():
      users = db.session.query(User).all()
@@ -209,10 +233,6 @@ def unauthorized_message():
     response = jsonify({'message' : 'You are not authorized to perform this action'})
     response.status_code = 401
     return response
-
-
-
-
 
 @app.errorhandler(404)
 def no_such_resource(e):

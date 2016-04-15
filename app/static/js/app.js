@@ -144,7 +144,19 @@ wishListApp.controller('WishListController' , ['$scope' , '$cookies' , '$http' ,
                 $cookies.put('item' , id);
                 $cookies.put('selectedUser', $scope.id);
                 $location.path('/item');
-            }
+            };
+
+            $scope.purchaseItem = function(id, index){
+                $http.patch('/wishlist/' + $cookies.get('currentUserId') + '/' + id , 
+                        {'purchased': $scope.items[index].purchased},
+                        {headers:{'AuthToken': $cookies.get('authToken')}}).
+                success(function(data, status){
+                    $log.log(data);
+                }).
+                error(function(error, status){
+                    $log.log(error);
+                });
+            };
         }]);
 
 wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$location', '$http','$rootScope' ,
