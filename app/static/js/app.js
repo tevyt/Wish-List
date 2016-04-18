@@ -203,6 +203,7 @@ wishListApp.controller('NewItemController' , ['$scope' , '$cookies', '$log', '$l
 wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$http','$log','$rootScope',
         function($scope , $cookies, $location, $http, $log,$rootScope){
             $rootScope.error = false;
+            $scope.showEmailModal = false;
             if(!$cookies.get('selectedUser') || !$cookies.get('item')){
                 $location.path('/friends');
             }
@@ -221,8 +222,23 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                 $rootScope.error = true;
                 $rootScope.errors = data;
             });
+            $scope.currentUser = function(){
+                return userId == $cookies.get('currentUserId');
+            };
+            $scope.toggleEmailModal = function(){
+                $scope.showEmailModal = !$scope.showEmailModal;
+                return $scope.showEmailModal;
+            };
+            $scope.sendEmail = function(){
+                $http.post('/share',{title: $scope.title, 'thumbnailUrl': $scope.imageUrl, email: $scope.email, message: $scope.message, itemUrl: $scope.itemUrl}, {}).
+                   success(function(data, status){
+                       $log.log(JSON.stringify(data));
+                   }).
+                error(function(error, status){
+                    $log.log(JSON.stringify(error));
+                });
+            }
         }]);
-
 
 wishListApp.config(function($routeProvider){
     $routeProvider.when('/signup',{

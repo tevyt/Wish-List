@@ -1,3 +1,9 @@
+<style>
+.share_icon{
+  width: 100px;
+  height: 100px;  
+}
+</style>
 <div class="row">
   <div class="col-xs-3">
     <img ng-src="{{thumbnailUrl}}" class="img img-responsive preview">
@@ -19,3 +25,63 @@
     <a ng-href="{{itemUrl}}">Purchase here</a>
   </div>
 </div>
+
+<div class="row text text-center" ng-show="currentUser()">
+  <div class="col-xs-12">
+    <h3>Share</h3>
+  </div>
+</div>
+
+<div class="row" ng-show="currentUser()">
+  <div class="col-xs-4">
+    <a href="" ng-click="toggleEmailModal()"><img class="img img-responsive share_icon center-block" src="static/images/images.png"/></a>
+  </div>
+  <div class="col-xs-4">
+    <img class="img img-responsive share_icon center-block" src="static/images/facebook.png"/>
+  </div>
+  <div class="col-xs-4">
+    <img class="img img-responsive share_icon center-block" src="static/images/twitter.ico"/>
+  </div>
+</div>
+
+<!-- Send Email Modal -->
+<div class="modal-dialog" id="email-modal" aria-hidden="true" ng-show="showEmailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="row">
+        <div class="col-xs-6">
+          <h1 class="modal-title">Share Item</h4>
+        </div>
+    
+        <div class="col-xs-6 text-right">
+          <a type="close" data-dismiss="modal" aria-hidden="true" ng-click="toggleEmailModal()"><i class="glyphicon glyphicon-remove-circle"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-3">
+            <img ng-src="{{thumbnailUrl}}" class="img img-responsive"></img>
+          </div>
+          <div class="col-xs-9">
+            <h3>{{title}}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <a href="{{itemUrl}}">Purchase Here</a>
+        </div>
+        <div class="row">
+          <input type="email" placeholder="Friend's Email" class="form-control" ng-model="email"></input>
+        </div>
+        <div class="row">
+          <textArea placeholder="Message" class="form-control" ng-model="message"></textArea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row text right">
+          <button class="btn btn-primary" ng-click="sendEmail()">Send</button>
+        </div>
+    </div>
+  </div>
+</div>
+

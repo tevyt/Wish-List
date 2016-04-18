@@ -218,6 +218,16 @@ def logout(user_id):
     response.status_code = 204
     return response
 
+@app.route('/share' ,methods=['POST'])
+def share():
+    data = request.get_json() 
+    # thumbnail = data['thumbnailUrl']
+    # title = data['title']
+    # email = data['email']
+    # message = data['message']
+    # itemUrl = data['itemUrl']
+    return jsonify(data)
+
 def authenticate_user(tokens, token ):
     return token in tokens
 
