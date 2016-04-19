@@ -9,6 +9,9 @@ import json
 from requests import get
 from bs4 import BeautifulSoup
 from urlparse import urljoin
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 @app.route('/' , methods=['GET'])
 def root():
@@ -218,15 +221,61 @@ def logout(user_id):
     response.status_code = 204
     return response
 
-@app.route('/share' ,methods=['POST'])
-def share():
+@app.route('/share/<user_id>' ,methods=['POST'])
+def share(user_id):
     data = request.get_json() 
-    # thumbnail = data['thumbnailUrl']
-    # title = data['title']
-    # email = data['email']
-    # message = data['message']
-    # itemUrl = data['itemUrl']
+    sendEmail(data, user_id)
     return jsonify(data)
+
+def sendEmail(data, user_id):
+    thumbnail = data['thumbnailUrl']
+    title = data['title']
+    email = data['email']
+    message = data['message']
+    itemUrl = data['itemUrl']
+    user = db.session.query(User).filter_by(id=user_id).first()
+    msg = MIMEMultipart('alternative')
+    msg['Subect'] = 'Will you get %s for %s?' % (title, user.firstname)
+    msg['From'] = user.email
+    msg['To'] = email
+    
+    html = '''
+    <html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    </head>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3">
+                <img style="width:300px; height:300px;"class="img img-responsive" src="{0}"></img>
+            </div>
+            <div class="col-xs-9">
+                <h3>{1}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <a href="{2}">Purchase here</a>
+        </div>
+        <div class="row">
+            <p>{3}</p>
+        </div>
+    </div>
+</html> '''.format(thumbnail, title, itemUrl, message)
+
+    part = MIMEText(html, 'html')
+
+    msg.attach(part)
+
+    username = 'travisinfo3180@gmail.com'
+    password = 'INFO3180'
+
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username,password)
+    server.sendmail(username, email, msg.as_string())
+    return jsonify({'message':'Shared'})
+
 
 def authenticate_user(tokens, token ):
     return token in tokens

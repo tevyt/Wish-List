@@ -230,9 +230,12 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                 return $scope.showEmailModal;
             };
             $scope.sendEmail = function(){
-                $http.post('/share',{title: $scope.title, 'thumbnailUrl': $scope.imageUrl, email: $scope.email, message: $scope.message, itemUrl: $scope.itemUrl}, {}).
+                $http.post('/share/' + $cookies.get('currentUserId'),{title: $scope.title, thumbnailUrl: $scope.thumbnailUrl, email: $scope.email, message: $scope.message, itemUrl: $scope.itemUrl}, {}).
                    success(function(data, status){
-                       $log.log(JSON.stringify(data));
+                       $scope.toggleEmailModal();
+                       $scope.email = '';
+                       $scope.message = '';
+                       alert('Message Sent');
                    }).
                 error(function(error, status){
                     $log.log(JSON.stringify(error));
