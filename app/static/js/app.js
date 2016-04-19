@@ -240,7 +240,10 @@ wishListApp.controller('ItemController' , ['$scope' , '$cookies', '$location','$
                 error(function(error, status){
                     $log.log(JSON.stringify(error));
                 });
-            }
+            };
+            $scope.notImplemented = function(){
+                alert('NOT YET IMPLEMENTED');
+            };
         }]);
 
 wishListApp.config(function($routeProvider){
